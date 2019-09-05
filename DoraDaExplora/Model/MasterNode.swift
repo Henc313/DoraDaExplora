@@ -13,13 +13,8 @@ struct MasterNode {
    
    var shares: String
    var address: String
-   
-   enum Tier {
-      case tier1, tier2, tier3, tier4
-   }
-   
-   enum State {
-      case active, deposited, suspended, invalidPing
-   }
+   var tier: Int
+   var state: Int
    
 }
+

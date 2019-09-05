@@ -17,14 +17,16 @@ class DetailTableViewController: UITableViewController {
    let url         = "https://mn-api.haloplatform.tech/owned/"
    var collapsed   = Bool()
    var totalMNs    = ""
-   let rowTitles   = ["Total MNs", "Total Shares", "Tier 1", "Tier 2", "Tier 3", "Tier 4"]
-   var walletData  = [String]()
-   var masterNodes = [MasterNode]()
+   var walletData  = WalletData()
+   var tierDetailsCollapsed = Bool()
    
    override func viewDidLoad() {
       super.viewDidLoad()
+      
       tableView.rowHeight = 44
       collapsed = true
+      tierDetailsCollapsed = true
+      
       DispatchQueue.global(qos: .background).async {
          if self.walletAddress != nil {
             self.fetchWalletData(url: self.url + self.walletAddress!)
@@ -43,21 +45,39 @@ class DetailTableViewController: UITableViewController {
    
    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
       if collapsed == true { return 1 }
-      else { return walletData.count + 1}
+      else {
+         return walletData.rowTitles.count + 1
+      }
    }
    
    
    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-      if indexPath.row == 0 { // Use modular operator to make every 4th row the title cell
+      if indexPath.row == 0 {
          let cell = tableView.dequeueReusableCell(withIdentifier: "titleCell", for: indexPath)
          cell.textLabel?.text = walletAddress
          return cell
       } else {
          guard let cell = tableView.dequeueReusableCell(withIdentifier: "detailCell") else { return UITableViewCell() }
-         cell.textLabel?.text = rowTitles[indexPath.row - 1]
+         cell.textLabel?.text = walletData.rowTitles[indexPath.row - 1]
          cell.textLabel?.textColor = UIColor.darkGray
+         
          if let detailLabel = cell.viewWithTag(125) as? UILabel {
-            detailLabel.text = walletData[indexPath.row - 1]
+            switch indexPath.row {
+            case 1:
+               detailLabel.text = walletData.totalMNs == 0 ? "This account has no MNs" : "\(walletData.totalMNs)"
+            case 2:
+               detailLabel.text = walletData.totalShares
+            case 3:
+               detailLabel.text = "\(walletData.t1Amount)"
+            case 4:
+               detailLabel.text = "\(walletData.t2Amount)"
+            case 5:
+               detailLabel.text = "\(walletData.t3Amount)"
+            case 6:
+               detailLabel.text = "\(walletData.t4Amount)"
+            default:
+               detailLabel.text = "Sumtin's messed up"
+            }
          }
          return cell
       }
@@ -65,6 +85,7 @@ class DetailTableViewController: UITableViewController {
    
    
    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+      calculateTotalTierCount()
       if indexPath.row == 0 {
          collapsed.toggle()
       }
@@ -79,21 +100,12 @@ class DetailTableViewController: UITableViewController {
       Alamofire.request(url, method: .get).responseJSON { response in
          if response.result.isSuccess {
             let jsonData = JSON(response.result.value as Any)
-            self.walletData.append(self.fetchTotalMNs(json: jsonData))
-            self.walletData.append(self.fetchTotalShares(json: jsonData))
-            self.fetchTierAmounts(json: jsonData)
+            self.walletData.totalShares = self.fetchTotalShares(json: jsonData)
+            self.walletData.totalMNs = jsonData["result"].count
+            self.fetchMNDetails(json: jsonData)
          } else {
             print("Error: \(String(describing: response.result.error))")
          }
-      }
-   }
-   
-   
-   func fetchTotalMNs(json: JSON) -> String {
-      if json["result"].count > 0 {
-         return String(json["result"].count)
-      } else {
-         return "That address has no MNs"
       }
    }
    
@@ -104,50 +116,58 @@ class DetailTableViewController: UITableViewController {
       if json["result"].count > 0 {
          for i in 1...json["result"].count {
             if let sharesInMN = json["result"][i - 1]["SHARES"].double {
-               let roundedAmount = (sharesInMN/1e18)
-               totalSharesInMN  += roundedAmount
+               totalSharesInMN  += sharesInMN
             }
          }
       } else { return "N/A"}
       
+      return format(number: totalSharesInMN)
+   }
+   
+   
+   func calculateTotalTierCount() {
+      
+      if walletData.t1Amount == 0 && walletData.t2Amount == 0 && walletData.t3Amount == 0 && walletData.t4Amount == 0 {
+         for mn in walletData.masterNodes {
+            if mn.tier == 1 {
+               walletData.t1Amount += 1
+            } else if mn.tier == 2 {
+               walletData.t2Amount += 1
+            } else if mn.tier == 3 {
+               walletData.t3Amount += 1
+            } else {
+               walletData.t4Amount += 1
+            }
+         }
+      }
+   }
+   
+   
+   func fetchMNDetails(json: JSON) {
+      
+      for mn in 0...json["result"].count {
+         
+         if let address = json["result"][mn]["ADDRESS"].string,
+            let state = json["result"][mn]["STATE"].int,
+            let tier = json["result"][mn]["TIER"].int,
+            let shares = json["result"][mn]["SHARES"].double {
+            
+            let newMN = MasterNode(shares: format(number: shares), address: address, tier: tier, state: state)
+            walletData.masterNodes.append(newMN)
+         }
+      }
+   }
+   
+   
+   func format(number: Double) -> String {
       let numberFormatter = NumberFormatter()
       numberFormatter.numberStyle = .decimal
       numberFormatter.groupingSeparator = " "
-      guard let formattedNumber = numberFormatter.string(from: NSNumber(value:totalSharesInMN)) else { return ""}
+      let dividedNumber = number / 1e18
+      guard let formattedNumber = numberFormatter.string(from: NSNumber(value:dividedNumber)) else { return ""}
       
       return formattedNumber
    }
    
    
-   func fetchTierAmounts(json: JSON) {
-      
-      var count = 0
-      var tier1 = 0
-      var tier2 = 0
-      var tier3 = 0
-      var tier4 = 0
-      
-      while count < json["result"].count {
-         if json["result"][count]["TIER"] == 1 {
-            tier1 += 1
-         } else if json["result"][count]["TIER"] == 2 {
-            tier2 += 1
-         } else if json["result"][count]["TIER"] == 3 {
-            tier3 += 1
-         } else {
-            tier4 += 1
-         }
-         count += 1
-      }
-      
-      let tierCounts = [tier1, tier2, tier3, tier4]
-      
-      if tierCounts == [0, 0, 0, 0] {
-         
-      } else {
-         for tier in tierCounts {
-            walletData.append(String(tier))
-         }
-      }
-   }
 }
