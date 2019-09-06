@@ -13,8 +13,7 @@ struct MasterNode {
    
    var shares: String
    var address: String
-   var tier: Int
    var state: Int
-   
+   var tier: Int
 }
 

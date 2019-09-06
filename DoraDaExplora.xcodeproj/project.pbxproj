@@ -13,10 +13,11 @@
 		B20D292B231D04F700BFA7FA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B20D292A231D04F700BFA7FA /* Assets.xcassets */; };
 		B20D292E231D04F700BFA7FA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B20D292C231D04F700BFA7FA /* LaunchScreen.storyboard */; };
 		B20D2936231D415B00BFA7FA /* AddressListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20D2935231D415B00BFA7FA /* AddressListTableViewController.swift */; };
-		B20D2956231E989900BFA7FA /* WalletSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20D2955231E989900BFA7FA /* WalletSection.swift */; };
+		B20D2956231E989900BFA7FA /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20D2955231E989900BFA7FA /* Group.swift */; };
 		B20D2958231ECCF700BFA7FA /* DetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20D2957231ECCF700BFA7FA /* DetailTableViewController.swift */; };
 		B252B5D12321182B003126B2 /* MasterNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B252B5D02321182B003126B2 /* MasterNode.swift */; };
 		B252B5D4232118D8003126B2 /* WalletData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B252B5D3232118D8003126B2 /* WalletData.swift */; };
+		B284428F2322AE5300A4E928 /* Tier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B284428E2322AE5300A4E928 /* Tier.swift */; };
 		F09BA879345B5D720CFD4E1A /* Pods_DoraDaExplora.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C40C4AF33E8251D51C84006B /* Pods_DoraDaExplora.framework */; };
 /* End PBXBuildFile section */
 
@@ -30,10 +31,11 @@
 		B20D292D231D04F700BFA7FA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B20D292F231D04F700BFA7FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B20D2935231D415B00BFA7FA /* AddressListTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressListTableViewController.swift; sourceTree = "<group>"; };
-		B20D2955231E989900BFA7FA /* WalletSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletSection.swift; sourceTree = "<group>"; };
+		B20D2955231E989900BFA7FA /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
 		B20D2957231ECCF700BFA7FA /* DetailTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailTableViewController.swift; sourceTree = "<group>"; };
 		B252B5D02321182B003126B2 /* MasterNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterNode.swift; sourceTree = "<group>"; };
 		B252B5D3232118D8003126B2 /* WalletData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletData.swift; sourceTree = "<group>"; };
+		B284428E2322AE5300A4E928 /* Tier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tier.swift; sourceTree = "<group>"; };
 		C40C4AF33E8251D51C84006B /* Pods_DoraDaExplora.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DoraDaExplora.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E06238B70FCE5A4B9013F3DA /* Pods-DoraDaExplora.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DoraDaExplora.debug.xcconfig"; path = "Target Support Files/Pods-DoraDaExplora/Pods-DoraDaExplora.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -96,9 +98,10 @@
 		B252B5D223211839003126B2 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				B20D2955231E989900BFA7FA /* WalletSection.swift */,
-				B252B5D02321182B003126B2 /* MasterNode.swift */,
+				B20D2955231E989900BFA7FA /* Group.swift */,
 				B252B5D3232118D8003126B2 /* WalletData.swift */,
+				B284428E2322AE5300A4E928 /* Tier.swift */,
+				B252B5D02321182B003126B2 /* MasterNode.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -249,7 +252,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B20D2956231E989900BFA7FA /* WalletSection.swift in Sources */,
+				B20D2956231E989900BFA7FA /* Group.swift in Sources */,
+				B284428F2322AE5300A4E928 /* Tier.swift in Sources */,
 				B20D2958231ECCF700BFA7FA /* DetailTableViewController.swift in Sources */,
 				B252B5D4232118D8003126B2 /* WalletData.swift in Sources */,
 				B20D2936231D415B00BFA7FA /* AddressListTableViewController.swift in Sources */,

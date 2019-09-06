@@ -7,12 +7,12 @@
 //
 
 
-struct WalletSection {
+struct Group {
    
-   var sectionName: String!
-   var sectionWallets: [Wallets]
+   var name: String!
+   var wallets: [Wallet]
    
-   struct Wallets {
+   struct Wallet {
       let name: String!
       let address: String!
    }

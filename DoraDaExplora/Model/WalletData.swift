@@ -11,24 +11,23 @@ import Foundation
 
 struct WalletData {
    
-   let rowTitles   = ["Total MasterNodes", "Total Shares", "Tier 1", "Tier 2", "Tier 3", "Tier 4"]
+   let rowTitles   = ["Address", "Total MasterNodes", "Total Shares", "Tier 1", "Tier 2", "Tier 3", "Tier 4"]
    
+   var address: String?
    var totalMNs: Int
    var totalShares: String?
-   var t1Amount: Int
-   var t2Amount: Int
-   var t3Amount: Int
-   var t4Amount: Int
-   
    var masterNodes: [MasterNode]
+   var tiers = [Tier(collapsed: true, name: "Tier1", masterNodes: []),
+                Tier(collapsed: true, name: "Tier2", masterNodes: []),
+                Tier(collapsed: true, name: "Tier3", masterNodes: []),
+                Tier(collapsed: true, name: "Tier4", masterNodes: [])
+               ]
+
    
-   init(totalMNs: Int = 0, totalShares: String = "", t1Amount: Int = 0, t2Amount: Int = 0, t3Amount: Int = 0, t4Amount: Int = 0) {
+   init(totalMNs: Int = 0, totalShares: String = "") {
       self.totalMNs = totalMNs
       self.totalShares = totalShares
-      self.t1Amount = t1Amount
-      self.t2Amount = t2Amount
-      self.t3Amount = t3Amount
-      self.t4Amount = t4Amount
       self.masterNodes = []
    }
 }
+// Make the tier amounts into an array, so you can pick the neccesary tier with indexes when opening and closing section in a tableView
