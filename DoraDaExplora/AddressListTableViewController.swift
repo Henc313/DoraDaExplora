@@ -18,6 +18,7 @@ class AddressListTableViewController: UITableViewController {
    
    var delegate: CanReceiveAddress?
    let url            = "https://mn-api.haloplatform.tech/owned/"
+   let eAPIurl        = "https://e-api.haloplatform.tech/halo/addresses/"
    var walletData: WalletData?
    var groupedWallets = [Group]()
    
@@ -28,6 +29,7 @@ class AddressListTableViewController: UITableViewController {
    override func viewDidLoad() {
       super.viewDidLoad()
       
+      title = "Address List"
       tableView.rowHeight = 48
       
       groupedWallets = [Group(name: "Halo Owned",
@@ -111,6 +113,15 @@ class AddressListTableViewController: UITableViewController {
          }
       }
    }
+   
+   
+//   func fetchMNRewardsBalance(url: String) {
+//      Alamofire.request(url, method: .get).responseJSON { response in
+//         if response.result.isSuccess {
+//            let jsonData = JSON(response.result.value as Any)
+//         }
+//      }
+//   }
    
    
    func fetchTotalShares(json: JSON) -> String {

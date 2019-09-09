@@ -18,6 +18,8 @@
 		B252B5D12321182B003126B2 /* MasterNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B252B5D02321182B003126B2 /* MasterNode.swift */; };
 		B252B5D4232118D8003126B2 /* WalletData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B252B5D3232118D8003126B2 /* WalletData.swift */; };
 		B284428F2322AE5300A4E928 /* Tier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B284428E2322AE5300A4E928 /* Tier.swift */; };
+		B2A33D7B2325699D00DBE0B5 /* SavedListView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B2A33D7A2325699D00DBE0B5 /* SavedListView.xib */; };
+		B2A33D7D23256A5800DBE0B5 /* SavedListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A33D7C23256A5800DBE0B5 /* SavedListViewController.swift */; };
 		F09BA879345B5D720CFD4E1A /* Pods_DoraDaExplora.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C40C4AF33E8251D51C84006B /* Pods_DoraDaExplora.framework */; };
 /* End PBXBuildFile section */
 
@@ -36,6 +38,8 @@
 		B252B5D02321182B003126B2 /* MasterNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterNode.swift; sourceTree = "<group>"; };
 		B252B5D3232118D8003126B2 /* WalletData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletData.swift; sourceTree = "<group>"; };
 		B284428E2322AE5300A4E928 /* Tier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tier.swift; sourceTree = "<group>"; };
+		B2A33D7A2325699D00DBE0B5 /* SavedListView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SavedListView.xib; sourceTree = "<group>"; };
+		B2A33D7C23256A5800DBE0B5 /* SavedListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedListViewController.swift; sourceTree = "<group>"; };
 		C40C4AF33E8251D51C84006B /* Pods_DoraDaExplora.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DoraDaExplora.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E06238B70FCE5A4B9013F3DA /* Pods-DoraDaExplora.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DoraDaExplora.debug.xcconfig"; path = "Target Support Files/Pods-DoraDaExplora/Pods-DoraDaExplora.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -87,6 +91,8 @@
 				B20D2927231D04F600BFA7FA /* Main.storyboard */,
 				B20D2925231D04F600BFA7FA /* ViewController.swift */,
 				B20D2935231D415B00BFA7FA /* AddressListTableViewController.swift */,
+				B2A33D7A2325699D00DBE0B5 /* SavedListView.xib */,
+				B2A33D7C23256A5800DBE0B5 /* SavedListViewController.swift */,
 				B20D2957231ECCF700BFA7FA /* DetailTableViewController.swift */,
 				B20D292A231D04F700BFA7FA /* Assets.xcassets */,
 				B20D292C231D04F700BFA7FA /* LaunchScreen.storyboard */,
@@ -177,6 +183,7 @@
 				B20D292E231D04F700BFA7FA /* LaunchScreen.storyboard in Resources */,
 				B20D292B231D04F700BFA7FA /* Assets.xcassets in Resources */,
 				B20D2929231D04F600BFA7FA /* Main.storyboard in Resources */,
+				B2A33D7B2325699D00DBE0B5 /* SavedListView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -257,6 +264,7 @@
 				B20D2958231ECCF700BFA7FA /* DetailTableViewController.swift in Sources */,
 				B252B5D4232118D8003126B2 /* WalletData.swift in Sources */,
 				B20D2936231D415B00BFA7FA /* AddressListTableViewController.swift in Sources */,
+				B2A33D7D23256A5800DBE0B5 /* SavedListViewController.swift in Sources */,
 				B20D2926231D04F600BFA7FA /* ViewController.swift in Sources */,
 				B20D2924231D04F600BFA7FA /* AppDelegate.swift in Sources */,
 				B252B5D12321182B003126B2 /* MasterNode.swift in Sources */,

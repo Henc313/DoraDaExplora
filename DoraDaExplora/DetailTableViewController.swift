@@ -15,8 +15,9 @@ class DetailTableViewController: UITableViewController {
    
    override func viewDidLoad() {
       super.viewDidLoad()
-      print(walletData.tiers[0].masterNodes.count)
+      
       tableView.rowHeight = 44
+      title = "Wallet Details"
       collapsed = true
    }
    
@@ -41,31 +42,60 @@ class DetailTableViewController: UITableViewController {
    
    
    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-      let cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
-      cell.textLabel?.text = "\(walletData.rowTitles[indexPath.section])"
-      
-      if let detailLabel = cell.viewWithTag(125) as? UILabel {
-         switch indexPath.section {
-         case 0:
-            detailLabel.text = walletData.address
-         case 1:
-            detailLabel.text = "\(walletData.totalMNs)"
-         case 2:
-            detailLabel.text = walletData.totalShares
-         case 3:
-            detailLabel.text = "\(walletData.tiers[0].masterNodes.count)"
-         case 4:
-            detailLabel.text = "\(walletData.tiers[1].masterNodes.count)"
-         case 5:
-            detailLabel.text = "\(walletData.tiers[2].masterNodes.count)"
-         case 6:
-            detailLabel.text = "\(walletData.tiers[3].masterNodes.count)"
-         default:
-            detailLabel.text = "Sumtin' done messed up!"
+      if indexPath.row == 0 {
+         let cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
+         cell.textLabel?.text = "\(walletData.rowTitles[indexPath.section])"
+         
+         if let detailLabel = cell.viewWithTag(125) as? UILabel {
+            
+            switch indexPath.section {
+            case 0:
+               detailLabel.text = walletData.address
+            case 1:
+               detailLabel.text = "\(walletData.totalMNs)"
+            case 2:
+               detailLabel.text = walletData.totalShares
+            case 3:
+               detailLabel.text = "\(walletData.tiers[0].masterNodes.count)"
+            case 4:
+               detailLabel.text = "\(walletData.tiers[1].masterNodes.count)"
+            case 5:
+               detailLabel.text = "\(walletData.tiers[2].masterNodes.count)"
+            case 6:
+               detailLabel.text = "\(walletData.tiers[3].masterNodes.count)"
+            default:
+               detailLabel.text = "Sumtin' done messed up!"
+            }
          }
+         return cell
+      } else {
+         let cell = tableView.dequeueReusableCell(withIdentifier: "mnCell", for: indexPath)
+         if let addressLabel = cell.viewWithTag(125) as? UILabel {
+            let masterNode = walletData.tiers[indexPath.section - 3].masterNodes[indexPath.row - 1]
+            addressLabel.text = masterNode.address
+            
+            switch masterNode.state {
+            case 1:
+               addressLabel.textColor = #colorLiteral(red: 0.2196078449, green: 0.007843137719, blue: 0.8549019694, alpha: 1) // Initialize
+            case 2:
+               addressLabel.textColor = #colorLiteral(red: 0.9529411793, green: 0.6862745285, blue: 0.1333333403, alpha: 1) // Deposited
+            case 3:
+               addressLabel.textColor = #colorLiteral(red: 0.2745098174, green: 0.4862745106, blue: 0.1411764771, alpha: 1) // Active
+            case 4:
+               addressLabel.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1) // Terminate
+            default:
+               addressLabel.textColor = #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1) // Unknown
+            }
+         }
+         
+         cell.textLabel?.text = walletData.tiers[indexPath.section - 3].masterNodes[indexPath.row - 1].shares
+         cell.textLabel?.alpha = 0.75
+         cell.backgroundColor = #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 1)
+         cell.textLabel?.font = UIFont(name: "Helvetica Neue", size: 14)
+         
+         
+         return cell
       }
-      
-      return cell
    }
    
    

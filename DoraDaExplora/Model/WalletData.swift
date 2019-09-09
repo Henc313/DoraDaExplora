@@ -16,7 +16,6 @@ struct WalletData {
    var address: String?
    var totalMNs: Int
    var totalShares: String?
-   var masterNodes: [MasterNode]
    var tiers = [Tier(collapsed: true, name: "Tier1", masterNodes: []),
                 Tier(collapsed: true, name: "Tier2", masterNodes: []),
                 Tier(collapsed: true, name: "Tier3", masterNodes: []),
@@ -27,7 +26,6 @@ struct WalletData {
    init(totalMNs: Int = 0, totalShares: String = "") {
       self.totalMNs = totalMNs
       self.totalShares = totalShares
-      self.masterNodes = []
    }
 }
 // Make the tier amounts into an array, so you can pick the neccesary tier with indexes when opening and closing section in a tableView

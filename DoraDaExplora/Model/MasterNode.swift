@@ -16,4 +16,3 @@ struct MasterNode {
    var state: Int
    var tier: Int
 }
-
