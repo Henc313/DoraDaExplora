@@ -2,16 +2,18 @@ import UIKit
 import Web3swift
 import CryptoSwift
 import BigInt
+import SVProgressHUD
 
 class ViewController: UIViewController, CanReceiveAddress {
    
    var wallet   = "0xbcef3088c414d25da1bde04775d484177f9326cb"
    let geth_url = "http://206.45.86.254:80"
    var numberFormatter: NumberFormatter?
+   var addressList = [String]()
+   var walletData = WalletData()
+   let defaults = UserDefaults.standard
+   var savedWallets = [String]()
    
-   @IBAction func testButton(_ sender: Any) {
-      print("Anything")
-   }
    enum CardState {
       case expanded
       case collapsed
@@ -20,8 +22,10 @@ class ViewController: UIViewController, CanReceiveAddress {
    var cardViewController: SavedListViewController!
    var visualEffectView: UIVisualEffectView!
    
-   let cardHeight: CGFloat = 400
-   let cardHeaderHeight: CGFloat = 42
+   let cardHeight: CGFloat = 700
+   let cardWidth: CGFloat = 370
+   let cardHeaderWidth: CGFloat = 40
+   var cardExpandedPositionX: CGFloat = -5
    
    var cardVisible = false
    var nextState: CardState {
@@ -31,16 +35,44 @@ class ViewController: UIViewController, CanReceiveAddress {
    var runningAnimations = [UIViewPropertyAnimator]()
    var animationProgressWhenInterrupted: CGFloat = 0
    
+   @IBOutlet var hitMeButton: UIButton!
+   @IBOutlet var balanceLabel: UILabel!
+   
+   override func viewDidLoad() {
+      super.viewDidLoad()
+      
+      savedWallets = defaults.object(forKey: "savedWallets") as? [String] ?? [String]()
+      setupCard()
+      setUpButton()
+      
+      view.backgroundColor = #colorLiteral(red: 0.4620226622, green: 0.8382837176, blue: 1, alpha: 1)
+      
+      navigationItem.leftBarButtonItem   = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewAddress))
+      navigationItem.rightBarButtonItems = [UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(goToAddressList)),
+                                            UIBarButtonItem(barButtonSystemItem: .bookmarks, target: self, action: #selector(makeTabTransparent))]
+   }
+   
+   
+   @objc func makeTabTransparent() {
+      animateTransitionIfNeeded(state: nextState, duration: 1)
+//      print(cardViewController.handleArea.alpha)
+//      if cardViewController.handleArea.alpha > 0.50 {
+//         cardViewController.handle.alpha = 0.1
+//         cardViewController.handleArea.alpha = 0.1
+//      } else {
+//         cardViewController.handle.alpha = 0.90
+//         cardViewController.handleArea.alpha = 0.90
+//      }
+   }
+   
+   
    func setupCard() {
-      visualEffectView = UIVisualEffectView()
-      visualEffectView.frame = self.view.frame
-      self.view.addSubview(visualEffectView)
       
       cardViewController = SavedListViewController(nibName: "SavedListView", bundle: nil)
       self.addChild(cardViewController)
       self.view.addSubview(cardViewController.view)
       
-      cardViewController.view.frame = CGRect(x: 0, y: self.view.frame.height - cardHeaderHeight, width: self.view.bounds.width, height: cardHeight)
+      cardViewController.view.frame = CGRect(x: 0 - cardWidth + cardHeaderWidth, y: 130, width: cardWidth, height: cardHeight)
       cardViewController.view.clipsToBounds = true
       
       let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(ViewController.handleCardTap(recognizer:)))
@@ -60,13 +92,14 @@ class ViewController: UIViewController, CanReceiveAddress {
       }
    }
    
+   
    @objc func handleCardPan(recognizer: UIPanGestureRecognizer) {
       switch recognizer.state {
       case .began:
          startInteractiveTransition(state: nextState, duration: 0.9)
       case .changed:
          let translation = recognizer.translation(in: self.cardViewController.handleArea)
-         var fractionComplete = translation.y / cardHeight
+         var fractionComplete = translation.x / cardWidth
          fractionComplete = cardVisible ? fractionComplete : -fractionComplete
          updateInteractiveTransition(fractionCompleted: fractionComplete)
       case .ended:
@@ -76,15 +109,16 @@ class ViewController: UIViewController, CanReceiveAddress {
       }
    }
    
+   
    func animateTransitionIfNeeded(state: CardState, duration: TimeInterval) {
       if runningAnimations.isEmpty {
          let frameAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1) {
             
             switch state {
             case .expanded:
-               self.cardViewController.view.frame.origin.y = self.view.frame.height - self.cardHeight
+               self.cardViewController.view.frame.origin.x = self.cardExpandedPositionX
             case .collapsed:
-               self.cardViewController.view.frame.origin.y = self.view.frame.height - self.cardHeaderHeight
+               self.cardViewController.view.frame.origin.x = self.cardHeaderWidth - self.cardWidth
             }
          }
          frameAnimator.addCompletion { _ in
@@ -94,20 +128,9 @@ class ViewController: UIViewController, CanReceiveAddress {
          
          frameAnimator.startAnimation()
          runningAnimations.append(frameAnimator)
-         
-         let blurAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1) {
-            switch state {
-            case .expanded:
-               self.visualEffectView.effect = UIBlurEffect(style: .dark)
-            case .collapsed:
-               self.visualEffectView.effect = nil
-            }
-         }
-         
-         blurAnimator.startAnimation()
-         runningAnimations.append(blurAnimator)
       }
    }
+   
    
    func startInteractiveTransition(state: CardState, duration: TimeInterval) {
       if runningAnimations.isEmpty {
@@ -118,6 +141,7 @@ class ViewController: UIViewController, CanReceiveAddress {
          animationProgressWhenInterrupted = animator.fractionComplete
       }
    }
+   
    
    func updateInteractiveTransition(fractionCompleted: CGFloat) {
       for animator in runningAnimations {
@@ -132,42 +156,9 @@ class ViewController: UIViewController, CanReceiveAddress {
    }
    
    
-   @IBOutlet var hitMeButton: UIButton!
-   @IBOutlet var balanceLabel: UILabel!
-   
-   override func viewDidLoad() {
-      super.viewDidLoad()
-      
-      setupCard()
-      
-      view.backgroundColor = #colorLiteral(red: 0.4620226622, green: 0.8382837176, blue: 1, alpha: 1)
-      
-      hitMeButton.layer.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
-      hitMeButton.layer.cornerRadius    = 17.0
-      hitMeButton.layer.shadowColor     = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
-      hitMeButton.layer.shadowRadius    = 8
-      hitMeButton.layer.shadowOffset    = CGSize(width: 3, height: 4)
-      hitMeButton.layer.shadowOpacity   = 1.0
-      hitMeButton.setTitleColor(.darkGray, for: .normal)
-      view.bringSubviewToFront(hitMeButton)
-      
-      navigationItem.leftBarButtonItem  = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewAddress))
-      navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(goToAddressList))
-   }
-   
-   
    @IBAction func hitMePressed(_ sender: Any) {
-      testDeployWithRemoteSigning()
       print("PRESSED")
-   }
-   
-   
-   func testDeployWithRemoteSigning() {
-      let web3 = try! Web3.new(URL.init(string: geth_url)!)
-      guard let address = EthereumAddress(wallet) else { return }
-      let balance = (try! web3.eth.getBalance(address: address))/BigUInt(1e18)
-      
-      updateUI(with: balance)
+      performSegue(withIdentifier: "savedAddressSegue", sender: self)
    }
    
    
@@ -176,15 +167,21 @@ class ViewController: UIViewController, CanReceiveAddress {
       ac.addTextField()
       ac.textFields![0].placeholder = "HALO Wallet Address Here"
       
-      let getTheBalance = UIAlertAction(title: "Get the Balance", style: .default) { [unowned ac] _ in
-         let walletAddress = ac.textFields![0].text
+      let getTheBalance = UIAlertAction(title: "Save", style: .default) { [unowned ac] _ in
+         guard let walletAddress = ac.textFields![0].text else { return }
          
-         if walletAddress!.count != 42 {
-            self.balanceLabel.text = "Address not valid"
+         if walletAddress.count != 42 {
+            let errorAc = UIAlertController(title: "Address not valid", message: "The address you entered does not seem to be a correct Halo address, please check and try again.", preferredStyle: .alert)
+            let action = UIAlertAction(title: "OK", style: .default, handler: nil)
+            
+            errorAc.addAction(action)
+            self.present(errorAc, animated: true)
+         } else {
+            self.savedWallets.append(walletAddress)
+            print(self.savedWallets)
+            self.defaults.set(self.savedWallets, forKey: "savedWallets")
+            self.cardViewController.tableView.reloadData()
          }
-         
-         self.wallet = walletAddress!
-         self.testDeployWithRemoteSigning()
       }
       
       ac.addAction(getTheBalance)
@@ -196,6 +193,9 @@ class ViewController: UIViewController, CanReceiveAddress {
       if segue.identifier == "addressListSegue" {
          let secondVC = segue.destination as! AddressListTableViewController
          secondVC.delegate = self
+      } else if segue.identifier == "SavedAddressSegue" {
+         let destinationVC = segue.destination as! DetailTableViewController
+         destinationVC.walletData = walletData
       }
    }
    
@@ -222,14 +222,20 @@ class ViewController: UIViewController, CanReceiveAddress {
    
    func updateUI(with balance: BigUInt) {
       balanceLabel.text = format(number: balance)
-      
    }
    
+   
+   func setUpButton() {
+      hitMeButton.layer.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+      hitMeButton.layer.cornerRadius    = 17.0
+      hitMeButton.layer.shadowColor     = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
+      hitMeButton.layer.shadowRadius    = 8
+      hitMeButton.layer.shadowOffset    = CGSize(width: 3, height: 4)
+      hitMeButton.layer.shadowOpacity   = 1.0
+      hitMeButton.setTitleColor(.darkGray, for: .normal)
+   }
    
    func getWallet(address: String) {
-      wallet = address
-      testDeployWithRemoteSigning()
+      // Protocol Method
    }
-   
-   
 }

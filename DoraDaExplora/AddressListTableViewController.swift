@@ -86,92 +86,18 @@ class AddressListTableViewController: UITableViewController {
    
    override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
       if let selectedWallet = groupedWallets[indexPath.section].wallets[indexPath.row].address {
-         fetchWalletData(url: url + selectedWallet)
-         walletData?.address = selectedWallet
-      }
-   }
-   
-   
-   // MARK: - Fetch the JSON
-   
-   func fetchWalletData(url: String) {
-      SVProgressHUD.show()
-      Alamofire.request(url, method: .get).responseJSON { response in
-         if response.result.isSuccess {
-            let jsonData = JSON(response.result.value as Any)
-            self.walletData?.totalShares = self.fetchTotalShares(json: jsonData)
-            self.walletData?.totalMNs = jsonData["result"].count
-            self.fetchMNDetails(json: jsonData)
-            SVProgressHUD.dismiss()
-            if let detailTableViewController = self.storyboard?.instantiateViewController(withIdentifier: "detailTableViewController") as? DetailTableViewController {
-               detailTableViewController.walletData = self.walletData
-               self.show(detailTableViewController, sender: self)
-            }
-         } else {
-            print("Error: \(String(describing: response.result.error))")
-            SVProgressHUD.dismiss()
-         }
-      }
-   }
-   
-   
-//   func fetchMNRewardsBalance(url: String) {
-//      Alamofire.request(url, method: .get).responseJSON { response in
-//         if response.result.isSuccess {
-//            let jsonData = JSON(response.result.value as Any)
-//         }
-//      }
-//   }
-   
-   
-   func fetchTotalShares(json: JSON) -> String {
-      var totalSharesInMN: Double = 0
-      
-      if json["result"].count > 0 {
-         for i in 1...json["result"].count {
-            if let sharesInMN = json["result"][i - 1]["SHARES"].double {
-               totalSharesInMN  += sharesInMN
-            }
-         }
-      } else { return "N/A"}
-      
-      return format(number: totalSharesInMN)
-   }
-   
-   
-   func fetchMNDetails(json: JSON) {
-      
-      for mn in 0...json["result"].count {
+         walletData?.fetchWalletData(address: selectedWallet)
          
-         if let address = json["result"][mn]["ADDRESS"].string,
-            let state = json["result"][mn]["STATE"].int,
-            let tier = json["result"][mn]["TIER"].int,
-            let shares = json["result"][mn]["SHARES"].double {
-            
-            let newMN = MasterNode(shares: format(number: shares), address: address, state: state, tier: tier)
-            
-            if newMN.tier == 1 {
-               walletData?.tiers[0].masterNodes.append(newMN)
-            } else if newMN.tier == 2 {
-               walletData?.tiers[1].masterNodes.append(newMN)
-            } else if newMN.tier == 3 {
-               walletData?.tiers[2].masterNodes.append(newMN)
-            } else {
-               walletData?.tiers[3].masterNodes.append(newMN)
+         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            if let detailTableViewController = self.storyboard?.instantiateViewController(withIdentifier: "detailTableViewController") as? DetailTableViewController {
+               detailTableViewController.walletData = self.walletData!
+               self.show(detailTableViewController, sender: self)
+               SVProgressHUD.dismiss()
             }
          }
       }
    }
    
    
-   func format(number: Double) -> String {
-      let numberFormatter = NumberFormatter()
-      numberFormatter.numberStyle = .decimal
-      numberFormatter.groupingSeparator = " "
-      let dividedNumber = number / 1e18
-      guard let formattedNumber = numberFormatter.string(from: NSNumber(value:dividedNumber)) else { return ""}
-      
-      return formattedNumber
-   }
    
 }

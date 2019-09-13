@@ -10,8 +10,8 @@ import UIKit
 
 class DetailTableViewController: UITableViewController {
    
-   var collapsed   = Bool()
-   var walletData: WalletData!
+   var collapsed  = Bool()
+   var walletData = WalletData()
    
    override func viewDidLoad() {
       super.viewDidLoad()

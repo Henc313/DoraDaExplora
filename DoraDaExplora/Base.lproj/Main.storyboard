@@ -37,14 +37,6 @@
                                     <action selector="hitMePressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="HVA-nm-ocs"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b50-DC-W0z">
-                                <rect key="frame" x="184" y="154" width="46" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                                <connections>
-                                    <action selector="testButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="1oD-a0-2Ve"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -60,6 +52,7 @@
                         <outlet property="balanceLabel" destination="bqw-EN-Y2q" id="BDl-WR-GtX"/>
                         <outlet property="hitMeButton" destination="uKg-iR-kE3" id="ZbU-rz-B3m"/>
                         <segue destination="vtT-ao-5s9" kind="show" identifier="addressListSegue" id="j9M-Ye-ruq"/>
+                        <segue destination="OLG-7L-hq6" kind="show" identifier="savedAddressSegue" id="2ao-B8-Wpz"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -107,7 +100,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fVn-PH-Q0v" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1857" y="666"/>
+            <point key="canvasLocation" x="1987" y="377"/>
         </scene>
         <!--Detail Table View Controller-->
         <scene sceneID="lvm-4A-WTE">
@@ -171,7 +164,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ra5-Dk-sHS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2666.666666666667" y="665.625"/>
+            <point key="canvasLocation" x="1987" y="1030"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="n0b-Cc-Vyu">
