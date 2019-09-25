@@ -20,6 +20,7 @@
 		B284428F2322AE5300A4E928 /* Tier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B284428E2322AE5300A4E928 /* Tier.swift */; };
 		B2A33D7B2325699D00DBE0B5 /* SavedListView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B2A33D7A2325699D00DBE0B5 /* SavedListView.xib */; };
 		B2A33D7D23256A5800DBE0B5 /* SavedListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A33D7C23256A5800DBE0B5 /* SavedListViewController.swift */; };
+		B2A33DA4232BB3AC00DBE0B5 /* mnCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A33DA3232BB3AC00DBE0B5 /* mnCellTableViewCell.swift */; };
 		F09BA879345B5D720CFD4E1A /* Pods_DoraDaExplora.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C40C4AF33E8251D51C84006B /* Pods_DoraDaExplora.framework */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +41,7 @@
 		B284428E2322AE5300A4E928 /* Tier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tier.swift; sourceTree = "<group>"; };
 		B2A33D7A2325699D00DBE0B5 /* SavedListView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SavedListView.xib; sourceTree = "<group>"; };
 		B2A33D7C23256A5800DBE0B5 /* SavedListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedListViewController.swift; sourceTree = "<group>"; };
+		B2A33DA3232BB3AC00DBE0B5 /* mnCellTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mnCellTableViewCell.swift; sourceTree = "<group>"; };
 		C40C4AF33E8251D51C84006B /* Pods_DoraDaExplora.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DoraDaExplora.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E06238B70FCE5A4B9013F3DA /* Pods-DoraDaExplora.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DoraDaExplora.debug.xcconfig"; path = "Target Support Files/Pods-DoraDaExplora/Pods-DoraDaExplora.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -108,6 +110,7 @@
 				B252B5D3232118D8003126B2 /* WalletData.swift */,
 				B284428E2322AE5300A4E928 /* Tier.swift */,
 				B252B5D02321182B003126B2 /* MasterNode.swift */,
+				B2A33DA3232BB3AC00DBE0B5 /* mnCellTableViewCell.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -259,6 +262,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B2A33DA4232BB3AC00DBE0B5 /* mnCellTableViewCell.swift in Sources */,
 				B20D2956231E989900BFA7FA /* Group.swift in Sources */,
 				B284428F2322AE5300A4E928 /* Tier.swift in Sources */,
 				B20D2958231ECCF700BFA7FA /* DetailTableViewController.swift in Sources */,

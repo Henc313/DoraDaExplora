@@ -178,7 +178,6 @@ class ViewController: UIViewController, CanReceiveAddress {
             self.present(errorAc, animated: true)
          } else {
             self.savedWallets.append(walletAddress)
-            print(self.savedWallets)
             self.defaults.set(self.savedWallets, forKey: "savedWallets")
             self.cardViewController.tableView.reloadData()
          }

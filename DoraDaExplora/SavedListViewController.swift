@@ -7,9 +7,7 @@
 //
 
 import UIKit
-import SwiftyJSON
 import SVProgressHUD
-import Alamofire
 
 
 class SavedListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
@@ -29,6 +27,9 @@ class SavedListViewController: UIViewController, UITableViewDataSource, UITableV
    override func viewDidLoad() {
       guard let walletList = defaults.object(forKey: "savedWallets") as? [String] else { return }
       savedWallets = walletList
+      
+      tableView.register(UINib(nibName: "SavedListView", bundle: nil), forCellReuseIdentifier: "detailCell")
+      tableView.register(UINib(nibName: "SavedListView", bundle: nil), forCellReuseIdentifier: "mnCell")
       
       view.layer.cornerRadius = 12
       handle.layer.cornerRadius = 6
@@ -65,5 +66,5 @@ class SavedListViewController: UIViewController, UITableViewDataSource, UITableV
       }
    }
    
-   
+
 }

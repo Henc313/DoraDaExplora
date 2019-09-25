@@ -39,7 +39,6 @@ class WalletData {
             let jsonData = JSON(response.result.value as Any)
             self.fetchTotalShares(json: jsonData)
             self.fetchMNDetails(json: jsonData)
-            print(self.tiers)
          } else {
             print("Error: \(String(describing: response.result.error))")
             SVProgressHUD.dismiss()

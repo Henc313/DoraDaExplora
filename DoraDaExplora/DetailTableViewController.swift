@@ -16,9 +16,14 @@ class DetailTableViewController: UITableViewController {
    override func viewDidLoad() {
       super.viewDidLoad()
       
+//      tableView.register(mnCellTableViewCell.self, forCellReuseIdentifier: "detailCell")
+//      tableView.register(mnCellTableViewCell.self, forCellReuseIdentifier: "mnCell")
+      
       tableView.rowHeight = 44
       title = "Wallet Details"
       collapsed = true
+      
+      print(walletData.address)
    }
    
    
@@ -43,6 +48,7 @@ class DetailTableViewController: UITableViewController {
    
    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
       if indexPath.row == 0 {
+         
          let cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath)
          cell.textLabel?.text = "\(walletData.rowTitles[indexPath.section])"
          
@@ -73,7 +79,6 @@ class DetailTableViewController: UITableViewController {
          if let addressLabel = cell.viewWithTag(125) as? UILabel {
             let masterNode = walletData.tiers[indexPath.section - 3].masterNodes[indexPath.row - 1]
             addressLabel.text = masterNode.address
-            
             switch masterNode.state {
             case 1:
                addressLabel.textColor = #colorLiteral(red: 0.2196078449, green: 0.007843137719, blue: 0.8549019694, alpha: 1) // Initialize
@@ -93,7 +98,6 @@ class DetailTableViewController: UITableViewController {
          cell.backgroundColor = #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 1)
          cell.textLabel?.font = UIFont(name: "Helvetica Neue", size: 14)
          
-         
          return cell
       }
    }
@@ -102,15 +106,13 @@ class DetailTableViewController: UITableViewController {
    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
       print(indexPath)
       if indexPath.section > 2 {
-         print(indexPath)
          walletData.tiers[indexPath.section - 3].collapsed.toggle()
          let sections = IndexSet.init(integer: indexPath.section)
          tableView.reloadSections(sections, with: .none)
       } else {
          tableView.deselectRow(at: indexPath, animated: true)
-         print(indexPath)
       }
    }
    
-   
+   // TODO: - Create a new cell class and connect the label straight to it's IBOutlet instead of using ViewWithTag
 }
