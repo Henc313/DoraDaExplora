@@ -1,25 +1,26 @@
+//let geth_url = "http://206.45.86.254:80"
+
 import UIKit
-import Web3swift
-import CryptoSwift
-import BigInt
 import SVProgressHUD
 
-class ViewController: UIViewController, CanReceiveAddress {
+class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CanReceiveAddress {
    
    var wallet   = "0xbcef3088c414d25da1bde04775d484177f9326cb"
-   let geth_url = "http://206.45.86.254:80"
    var numberFormatter: NumberFormatter?
    var addressList = [String]()
    var walletData = WalletData()
    let defaults = UserDefaults.standard
    var savedWallets = [String]()
+   let detailTableViewController = DetailTableViewController()
+   
+   let addressListVC = AddressListTableViewController()
+   var selectedWallet = ""
    
    enum CardState {
       case expanded
       case collapsed
    }
    
-   var cardViewController: SavedListViewController!
    var visualEffectView: UIVisualEffectView!
    
    let cardHeight: CGFloat = 700
@@ -35,8 +36,13 @@ class ViewController: UIViewController, CanReceiveAddress {
    var runningAnimations = [UIViewPropertyAnimator]()
    var animationProgressWhenInterrupted: CGFloat = 0
    
+   @IBOutlet var cardView: UIView!
    @IBOutlet var hitMeButton: UIButton!
    @IBOutlet var balanceLabel: UILabel!
+   @IBOutlet var handleArea: UIView!
+   @IBOutlet var handlebar: UIImageView!
+   @IBOutlet var savedListTableView: UITableView!
+   
    
    override func viewDidLoad() {
       super.viewDidLoad()
@@ -45,7 +51,10 @@ class ViewController: UIViewController, CanReceiveAddress {
       setupCard()
       setUpButton()
       
-      view.backgroundColor = #colorLiteral(red: 0.4620226622, green: 0.8382837176, blue: 1, alpha: 1)
+      guard let walletList = defaults.object(forKey: "savedWallets") as? [String] else { return }
+      savedWallets = walletList
+      
+      
       
       navigationItem.leftBarButtonItem   = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewAddress))
       navigationItem.rightBarButtonItems = [UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(goToAddressList)),
@@ -55,31 +64,28 @@ class ViewController: UIViewController, CanReceiveAddress {
    
    @objc func makeTabTransparent() {
       animateTransitionIfNeeded(state: nextState, duration: 1)
-//      print(cardViewController.handleArea.alpha)
-//      if cardViewController.handleArea.alpha > 0.50 {
-//         cardViewController.handle.alpha = 0.1
-//         cardViewController.handleArea.alpha = 0.1
-//      } else {
-//         cardViewController.handle.alpha = 0.90
-//         cardViewController.handleArea.alpha = 0.90
-//      }
    }
    
    
    func setupCard() {
-      
-      cardViewController = SavedListViewController(nibName: "SavedListView", bundle: nil)
-      self.addChild(cardViewController)
-      self.view.addSubview(cardViewController.view)
-      
-      cardViewController.view.frame = CGRect(x: 0 - cardWidth + cardHeaderWidth, y: 130, width: cardWidth, height: cardHeight)
-      cardViewController.view.clipsToBounds = true
+      cardView.layer.cornerRadius = 12
+      cardView.frame = CGRect(x: 0 - cardWidth + cardHeaderWidth, y: 130, width: cardWidth, height: cardHeight)
+      cardView.clipsToBounds = true
       
       let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(ViewController.handleCardTap(recognizer:)))
       let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(ViewController.handleCardPan(recognizer:)))
+
+      handleArea.addGestureRecognizer(tapGestureRecognizer)
+      handleArea.addGestureRecognizer(panGestureRecognizer)
       
-      cardViewController.handleArea.addGestureRecognizer(tapGestureRecognizer)
-      cardViewController.handleArea.addGestureRecognizer(panGestureRecognizer)
+      view.layer.cornerRadius = 12
+      handlebar.layer.cornerRadius = 6
+      handleArea.backgroundColor = #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 1)
+      handleArea.alpha = 0.90
+      handlebar.alpha = 0.90
+      cardView.backgroundColor = .clear
+      
+      view.backgroundColor = #colorLiteral(red: 0.4620226622, green: 0.8382837176, blue: 1, alpha: 1)
    }
    
    
@@ -93,12 +99,13 @@ class ViewController: UIViewController, CanReceiveAddress {
    }
    
    
+   //MARK: - Adapt to UIView
    @objc func handleCardPan(recognizer: UIPanGestureRecognizer) {
       switch recognizer.state {
       case .began:
          startInteractiveTransition(state: nextState, duration: 0.9)
       case .changed:
-         let translation = recognizer.translation(in: self.cardViewController.handleArea)
+         let translation = recognizer.translation(in: handleArea)
          var fractionComplete = translation.x / cardWidth
          fractionComplete = cardVisible ? fractionComplete : -fractionComplete
          updateInteractiveTransition(fractionCompleted: fractionComplete)
@@ -116,9 +123,9 @@ class ViewController: UIViewController, CanReceiveAddress {
             
             switch state {
             case .expanded:
-               self.cardViewController.view.frame.origin.x = self.cardExpandedPositionX
+               self.cardView.frame.origin.x = self.cardExpandedPositionX
             case .collapsed:
-               self.cardViewController.view.frame.origin.x = self.cardHeaderWidth - self.cardWidth
+               self.cardView.frame.origin.x = self.cardHeaderWidth - self.cardWidth
             }
          }
          frameAnimator.addCompletion { _ in
@@ -155,6 +162,34 @@ class ViewController: UIViewController, CanReceiveAddress {
       }
    }
    
+   //MARK: - TableView Delegate Methods
+   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+      return savedWallets.count
+   }
+   
+   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+      tableView.register(UITableViewCell.self, forCellReuseIdentifier: "defaultCell")
+      let cell = tableView.dequeueReusableCell(withIdentifier: "defaultCell", for: indexPath)
+      if savedWallets.isEmpty {
+         cell.textLabel?.text = "No addresses saved yet"
+      } else {
+         cell.textLabel?.text = savedWallets[indexPath.row]
+      }
+      return cell
+   }
+   
+   
+   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+      selectedWallet = savedWallets[indexPath.row]
+      walletData.fetchWalletData(address: selectedWallet)
+      detailTableViewController.walletData = walletData
+      DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+         
+         self.show(self.detailTableViewController, sender: self)
+         SVProgressHUD.dismiss()
+      }
+   }
+   
    
    @IBAction func hitMePressed(_ sender: Any) {
       print("PRESSED")
@@ -179,7 +214,7 @@ class ViewController: UIViewController, CanReceiveAddress {
          } else {
             self.savedWallets.append(walletAddress)
             self.defaults.set(self.savedWallets, forKey: "savedWallets")
-            self.cardViewController.tableView.reloadData()
+            
          }
       }
       
@@ -201,26 +236,6 @@ class ViewController: UIViewController, CanReceiveAddress {
    
    @objc func goToAddressList() {
       performSegue(withIdentifier: "addressListSegue", sender: self)
-   }
-   
-   
-   func format(number: BigUInt) -> String? {
-      numberFormatter = NumberFormatter()
-      numberFormatter?.usesGroupingSeparator = true
-      numberFormatter?.groupingSeparator = " "
-      numberFormatter?.numberStyle = .decimal
-      numberFormatter?.positiveSuffix = " HALO"
-      numberFormatter?.positivePrefix = "Balance is "
-      
-      let numberAsInteger = Int(number)
-      let formattedNumber = numberFormatter?.string(from: NSNumber(value: numberAsInteger))
-      
-      return formattedNumber ?? ""
-   }
-   
-   
-   func updateUI(with balance: BigUInt) {
-      balanceLabel.text = format(number: balance)
    }
    
    

@@ -35,6 +35,34 @@
                                     <action selector="hitMePressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="HVA-nm-ocs"/>
                                 </connections>
                             </button>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Suv-2u-s0x">
+                                <rect key="frame" x="0.0" y="160" width="370" height="700"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JFs-41-Ypz">
+                                        <rect key="frame" x="329" y="0.0" width="41" height="700"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <subviews>
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4Zz-yV-wzh">
+                                                <rect key="frame" x="15" y="291" width="8" height="100"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </imageView>
+                                        </subviews>
+                                    </view>
+                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="YE9-IW-Zv7">
+                                        <rect key="frame" x="0.0" y="0.0" width="329" height="700"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                        <connections>
+                                            <outlet property="dataSource" destination="BYZ-38-t0r" id="ZFf-O5-7kI"/>
+                                            <outlet property="delegate" destination="BYZ-38-t0r" id="Dec-RH-gxx"/>
+                                        </connections>
+                                    </tableView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <viewLayoutGuide key="safeArea" id="Cg5-kF-vMG"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -48,7 +76,11 @@
                     <navigationItem key="navigationItem" id="IQB-h4-ygh"/>
                     <connections>
                         <outlet property="balanceLabel" destination="bqw-EN-Y2q" id="BDl-WR-GtX"/>
+                        <outlet property="cardView" destination="Suv-2u-s0x" id="gM1-9p-PNZ"/>
+                        <outlet property="handleArea" destination="JFs-41-Ypz" id="7VG-r4-Zz9"/>
+                        <outlet property="handlebar" destination="4Zz-yV-wzh" id="PY0-Sl-5pJ"/>
                         <outlet property="hitMeButton" destination="uKg-iR-kE3" id="ZbU-rz-B3m"/>
+                        <outlet property="savedListTableView" destination="YE9-IW-Zv7" id="k5Z-7o-0n1"/>
                         <segue destination="vtT-ao-5s9" kind="show" identifier="addressListSegue" id="j9M-Ye-ruq"/>
                         <segue destination="OLG-7L-hq6" kind="show" identifier="savedAddressSegue" id="2ao-B8-Wpz"/>
                     </connections>
@@ -109,52 +141,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" alpha="0.75" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="detailCell" id="L2g-lG-hrB" customClass="mnCellTableViewCell" customModule="DoraDaExplora" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="414" height="43"/>
+                            <tableViewCell clipsSubviews="YES" alpha="0.75" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="detailCell" id="L2g-lG-hrB" customClass="detailCell" customModule="DoraDaExplora" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="414" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="L2g-lG-hrB" id="Tfh-BV-fvV">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="L2g-lG-hrB" id="Tfh-BV-fvV" customClass="detailCell" customModule="DoraDaExplora" customModuleProvider="target">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" tag="125" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.65000000000000002" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hno-fz-AGt">
-                                            <rect key="frame" x="352" y="11" width="42" height="21"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstItem="hno-fz-AGt" firstAttribute="trailing" secondItem="Tfh-BV-fvV" secondAttribute="trailingMargin" id="1OP-2i-fMM"/>
-                                        <constraint firstAttribute="bottomMargin" secondItem="hno-fz-AGt" secondAttribute="bottom" id="334-QH-a8T"/>
-                                        <constraint firstItem="hno-fz-AGt" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Tfh-BV-fvV" secondAttribute="leading" constant="90" id="9SQ-fp-hxN"/>
-                                        <constraint firstItem="hno-fz-AGt" firstAttribute="top" secondItem="Tfh-BV-fvV" secondAttribute="topMargin" id="weu-Z4-ec3"/>
-                                    </constraints>
                                 </tableViewCellContentView>
-                            </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="mnCell" id="mUk-Ca-IXp" customClass="mnCellTableViewCell" customModule="DoraDaExplora" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="71" width="414" height="32"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="mUk-Ca-IXp" id="1xc-al-wQT">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="32"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" tag="125" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" minimumScaleFactor="0.59999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="01n-vF-tmh">
-                                            <rect key="frame" x="95" y="0.0" width="299" height="21"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstItem="01n-vF-tmh" firstAttribute="leading" secondItem="1xc-al-wQT" secondAttribute="leadingMargin" constant="75" id="8St-hm-e8a"/>
-                                        <constraint firstItem="01n-vF-tmh" firstAttribute="bottom" secondItem="1xc-al-wQT" secondAttribute="bottomMargin" id="Bka-Vp-Fst"/>
-                                        <constraint firstItem="01n-vF-tmh" firstAttribute="top" secondItem="1xc-al-wQT" secondAttribute="top" id="Byh-De-hSv"/>
-                                        <constraint firstItem="01n-vF-tmh" firstAttribute="trailing" secondItem="1xc-al-wQT" secondAttribute="trailingMargin" id="rLn-sB-qdC"/>
-                                    </constraints>
-                                </tableViewCellContentView>
-                                <connections>
-                                    <outlet property="mnCellLabel" destination="01n-vF-tmh" id="YF1-Gd-kWZ"/>
-                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -165,7 +158,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ra5-Dk-sHS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1987" y="1030"/>
+            <point key="canvasLocation" x="1986.9565217391305" y="1029.9107142857142"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="n0b-Cc-Vyu">
