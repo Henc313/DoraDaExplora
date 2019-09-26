@@ -5,7 +5,7 @@ import SVProgressHUD
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CanReceiveAddress {
    
-   var wallet   = "0xbcef3088c414d25da1bde04775d484177f9326cb"
+   var wallet = "0xbcef3088c414d25da1bde04775d484177f9326cb"
    var numberFormatter: NumberFormatter?
    var addressList = [String]()
    var walletData = WalletData()
@@ -54,11 +54,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
       guard let walletList = defaults.object(forKey: "savedWallets") as? [String] else { return }
       savedWallets = walletList
       
-      
+      savedListTableView.alpha = 0.75
       
       navigationItem.leftBarButtonItem   = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewAddress))
       navigationItem.rightBarButtonItems = [UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(goToAddressList)),
-                                            UIBarButtonItem(barButtonSystemItem: .bookmarks, target: self, action: #selector(makeTabTransparent))]
+                                            UIBarButtonItem(barButtonSystemItem: .bookmarks, target: self, action: #selector(makeTabTransparent))
+      ]
    }
    
    
@@ -80,12 +81,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
       
       view.layer.cornerRadius = 12
       handlebar.layer.cornerRadius = 6
-      handleArea.backgroundColor = #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 1)
-      handleArea.alpha = 0.90
-      handlebar.alpha = 0.90
+      handleArea.backgroundColor = #colorLiteral(red: 0.3333333433, green: 0.3333333433, blue: 0.3333333433, alpha: 1)
+      handleArea.alpha = 0.75
+      handlebar.alpha = 0.75
       cardView.backgroundColor = .clear
       
-      view.backgroundColor = #colorLiteral(red: 0.4620226622, green: 0.8382837176, blue: 1, alpha: 1)
    }
    
    
@@ -99,7 +99,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
    }
    
    
-   //MARK: - Adapt to UIView
+   //TODO: - Adapt to UIView
    @objc func handleCardPan(recognizer: UIPanGestureRecognizer) {
       switch recognizer.state {
       case .began:
@@ -180,13 +180,35 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
    
    
    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+      walletData = WalletData()
       selectedWallet = savedWallets[indexPath.row]
       walletData.fetchWalletData(address: selectedWallet)
       detailTableViewController.walletData = walletData
-      DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-         
+      
+      DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+
          self.show(self.detailTableViewController, sender: self)
+         self.detailTableViewController.tableView.reloadData()
          SVProgressHUD.dismiss()
+      }
+   }
+   
+   
+   func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+      return true
+   }
+   
+   
+   func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+      if editingStyle == .delete {
+         savedWallets.remove(at: indexPath.row)
+         
+         self.defaults.set(self.savedWallets, forKey: "savedWallets")
+         
+         tableView.beginUpdates()
+         tableView.deleteRows(at: [indexPath], with: .automatic)
+         tableView.endUpdates()
+         
       }
    }
    
@@ -214,6 +236,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
          } else {
             self.savedWallets.append(walletAddress)
             self.defaults.set(self.savedWallets, forKey: "savedWallets")
+            self.savedListTableView.reloadData()
             
          }
       }
@@ -240,13 +263,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
    
    
    func setUpButton() {
-      hitMeButton.layer.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+      hitMeButton.layer.backgroundColor = #colorLiteral(red: 0.3333333433, green: 0.3333333433, blue: 0.3333333433, alpha: 1)
       hitMeButton.layer.cornerRadius    = 17.0
-      hitMeButton.layer.shadowColor     = #colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)
+      hitMeButton.layer.shadowColor     = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
       hitMeButton.layer.shadowRadius    = 8
       hitMeButton.layer.shadowOffset    = CGSize(width: 3, height: 4)
       hitMeButton.layer.shadowOpacity   = 1.0
-      hitMeButton.setTitleColor(.darkGray, for: .normal)
+      hitMeButton.setTitleColor(.lightGray, for: .normal)
    }
    
    func getWallet(address: String) {

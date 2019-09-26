@@ -19,7 +19,6 @@ class DetailTableViewController: UITableViewController {
       tableView.register(DetailCell.self, forCellReuseIdentifier: "detailCell")
       tableView.register(TitleCell.self, forCellReuseIdentifier: "titleCell")
       
-      
       tableView.rowHeight = 44
       title = "Wallet Details"
       collapsed = true
@@ -95,7 +94,7 @@ class DetailTableViewController: UITableViewController {
          
          cell.textLabel?.text = walletData.tiers[indexPath.section - 3].masterNodes[indexPath.row - 1].shares
          cell.textLabel?.alpha = 0.75
-         cell.backgroundColor = #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 1)
+         cell.backgroundColor = #colorLiteral(red: 0.1298420429, green: 0.1298461258, blue: 0.1298439503, alpha: 1)
          cell.textLabel?.font = UIFont(name: "Helvetica Neue", size: 14)
          
          return cell
