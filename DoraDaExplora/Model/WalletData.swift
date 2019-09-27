@@ -13,12 +13,13 @@ import SwiftyJSON
 
 class WalletData {
    
-   let apiURL = "https://mn-api.haloplatform.tech/owned/"
-   let rowTitles   = ["Address", "Total MasterNodes", "Total Shares", "Tier 1", "Tier 2", "Tier 3", "Tier 4"]
-   
-   var address = ""
+   let apiURL    = "https://mn-api.haloplatform.tech/owned/"
+   let rowTitles = ["Address", "Total MasterNodes", "Total Shares", "Tier 1", "Tier 2", "Tier 3", "Tier 4"]
+   var address   = ""
    var totalMNs: Int
    var totalShares = ""
+   var mnArray = [(address: String, shares: Double)]()
+   var totalRewards = ""
    var tiers = [Tier(collapsed: true, name: "Tier1", masterNodes: []),
                 Tier(collapsed: true, name: "Tier2", masterNodes: []),
                 Tier(collapsed: true, name: "Tier3", masterNodes: []),
@@ -27,12 +28,14 @@ class WalletData {
 
    
    init(totalMNs: Int = 0) {
-      self.totalMNs    = totalMNs
+      self.totalMNs = totalMNs
    }
    
    
    func fetchWalletData(address: String) {
-      SVProgressHUD.show()
+      DispatchQueue.main.async {
+         SVProgressHUD.show()
+      }
       self.address = address
       Alamofire.request(apiURL + address, method: .get).responseJSON { response in
          if response.result.isSuccess {
@@ -41,17 +44,32 @@ class WalletData {
             self.fetchMNDetails(json: jsonData)
          } else {
             print("Error: \(String(describing: response.result.error))")
-            SVProgressHUD.dismiss()
+            DispatchQueue.main.async {
+               SVProgressHUD.dismiss()
+            }
          }
       }
    }
    
    
+   func fetchWalletBalances(address: String) -> String {
+      let balanceRequestURL = "https://e-api.haloplatform.tech/halo/addresses/\(address)/balance"
+      var balance: Double   = 0
+      Alamofire.request(balanceRequestURL, method: .get).responseJSON { response in
+         if response.result.isSuccess {
+            let jsonData = JSON(response.result.value as Any)
+            balance = jsonData["result"]["balance"].doubleValue
+         } else {
+            print("Error \(String(describing: response.result.error))")
+         }
+      }
+      return format(number: balance)
+   }
+   
+   
    private func fetchTotalShares(json: JSON) {
       var totalSharesInMN: Double = 0
-      
       totalMNs = json["result"].count
-      
       if json["result"].count > 0 {
          for i in 1...json["result"].count {
             if let sharesInMN = json["result"][i - 1]["SHARES"].double {
@@ -73,6 +91,8 @@ class WalletData {
             let tier = json["result"][mn]["TIER"].int,
             let shares = json["result"][mn]["SHARES"].double {
             
+            mnArray.append((address, shares))
+            
             let newMN = MasterNode(shares: format(number: shares), address: address, state: state, tier: tier)
             
             if newMN.tier == 1 {
@@ -89,7 +109,7 @@ class WalletData {
    }
    
    
-   private func format(number: Double) -> String {
+   func format(number: Double) -> String {
       let numberFormatter = NumberFormatter()
       numberFormatter.numberStyle = .decimal
       numberFormatter.groupingSeparator = " "

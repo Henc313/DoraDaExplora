@@ -15,6 +15,7 @@
 		B20D2936231D415B00BFA7FA /* AddressListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20D2935231D415B00BFA7FA /* AddressListTableViewController.swift */; };
 		B20D2956231E989900BFA7FA /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20D2955231E989900BFA7FA /* Group.swift */; };
 		B20D2958231ECCF700BFA7FA /* DetailTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20D2957231ECCF700BFA7FA /* DetailTableViewController.swift */; };
+		B211B1EC233E800B00F59BCE /* GroupedWallets.swift in Sources */ = {isa = PBXBuildFile; fileRef = B211B1EB233E800B00F59BCE /* GroupedWallets.swift */; };
 		B2505B54233BB46100D0D4FB /* DetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2505B53233BB46100D0D4FB /* DetailCell.swift */; };
 		B2505B56233BC35F00D0D4FB /* TitleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2505B55233BC35F00D0D4FB /* TitleCell.swift */; };
 		B252B5D12321182B003126B2 /* MasterNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B252B5D02321182B003126B2 /* MasterNode.swift */; };
@@ -35,6 +36,7 @@
 		B20D2935231D415B00BFA7FA /* AddressListTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressListTableViewController.swift; sourceTree = "<group>"; };
 		B20D2955231E989900BFA7FA /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
 		B20D2957231ECCF700BFA7FA /* DetailTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailTableViewController.swift; sourceTree = "<group>"; };
+		B211B1EB233E800B00F59BCE /* GroupedWallets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupedWallets.swift; sourceTree = "<group>"; };
 		B2505B53233BB46100D0D4FB /* DetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCell.swift; sourceTree = "<group>"; };
 		B2505B55233BC35F00D0D4FB /* TitleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleCell.swift; sourceTree = "<group>"; };
 		B252B5D02321182B003126B2 /* MasterNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterNode.swift; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				B20D2955231E989900BFA7FA /* Group.swift */,
+				B211B1EB233E800B00F59BCE /* GroupedWallets.swift */,
 				B252B5D3232118D8003126B2 /* WalletData.swift */,
 				B284428E2322AE5300A4E928 /* Tier.swift */,
 				B252B5D02321182B003126B2 /* MasterNode.swift */,
@@ -260,6 +263,7 @@
 			files = (
 				B20D2956231E989900BFA7FA /* Group.swift in Sources */,
 				B284428F2322AE5300A4E928 /* Tier.swift in Sources */,
+				B211B1EC233E800B00F59BCE /* GroupedWallets.swift in Sources */,
 				B2505B56233BC35F00D0D4FB /* TitleCell.swift in Sources */,
 				B20D2958231ECCF700BFA7FA /* DetailTableViewController.swift in Sources */,
 				B252B5D4232118D8003126B2 /* WalletData.swift in Sources */,

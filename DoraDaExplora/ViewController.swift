@@ -2,6 +2,8 @@
 
 import UIKit
 import SVProgressHUD
+import Alamofire
+import SwiftyJSON
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CanReceiveAddress {
    
@@ -12,6 +14,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
    let defaults = UserDefaults.standard
    var savedWallets = [String]()
    let detailTableViewController = DetailTableViewController()
+   var walletBalance: String = "Display the wallet balance for selected wallet" {
+      didSet {
+         balanceLabel.text = walletBalance
+      }
+   }
    
    let addressListVC = AddressListTableViewController()
    var selectedWallet = ""
@@ -20,8 +27,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
       case expanded
       case collapsed
    }
-   
-   var visualEffectView: UIVisualEffectView!
    
    let cardHeight: CGFloat = 700
    let cardWidth: CGFloat = 370
@@ -42,10 +47,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
    @IBOutlet var handleArea: UIView!
    @IBOutlet var handlebar: UIImageView!
    @IBOutlet var savedListTableView: UITableView!
-   
+   @IBOutlet var visualEffectView: UIVisualEffectView!
    
    override func viewDidLoad() {
       super.viewDidLoad()
+      
+      visualEffectView.effect = nil
+      visualEffectView.isHidden = true
       
       savedWallets = defaults.object(forKey: "savedWallets") as? [String] ?? [String]()
       setupCard()
@@ -85,7 +93,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
       handleArea.alpha = 0.75
       handlebar.alpha = 0.75
       cardView.backgroundColor = .clear
-      
    }
    
    
@@ -107,7 +114,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
       case .changed:
          let translation = recognizer.translation(in: handleArea)
          var fractionComplete = translation.x / cardWidth
-         fractionComplete = cardVisible ? fractionComplete : -fractionComplete
+         fractionComplete = cardVisible ? -fractionComplete : fractionComplete
          updateInteractiveTransition(fractionCompleted: fractionComplete)
       case .ended:
          continueInteractiveTransition()
@@ -135,6 +142,25 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
          
          frameAnimator.startAnimation()
          runningAnimations.append(frameAnimator)
+         
+         frameAnimator.startAnimation()
+         runningAnimations.append(frameAnimator)
+         
+         let blurAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1) {
+            switch state {
+            case .expanded:
+               self.visualEffectView.isHidden = false
+               self.visualEffectView.effect = UIBlurEffect(style: .dark)
+            case .collapsed:
+               self.visualEffectView.effect = nil
+               DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
+                  self.visualEffectView.isHidden = true
+               }
+            }
+         }
+         
+         blurAnimator.startAnimation()
+         runningAnimations.append(blurAnimator)
       }
    }
    
@@ -156,37 +182,54 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
       }
    }
    
+   
    func continueInteractiveTransition() {
       for animator in runningAnimations {
          animator.continueAnimation(withTimingParameters: nil, durationFactor: 0)
       }
    }
    
+   
    //MARK: - TableView Delegate Methods
    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-      return savedWallets.count
+//      if savedWallets.isEmpty {
+//         return 1
+//      } else {
+         return savedWallets.count
+//      }
    }
    
+   
    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-      tableView.register(UITableViewCell.self, forCellReuseIdentifier: "defaultCell")
-      let cell = tableView.dequeueReusableCell(withIdentifier: "defaultCell", for: indexPath)
       if savedWallets.isEmpty {
+         let cell = tableView.dequeueReusableCell(withIdentifier: "StaticCell", for: indexPath)
          cell.textLabel?.text = "No addresses saved yet"
+         cell.textLabel?.textColor = .white
+         cell.isEditing = false
+         return cell
       } else {
+         let cell = tableView.dequeueReusableCell(withIdentifier: "AddressBookCell", for: indexPath)
          cell.textLabel?.text = savedWallets[indexPath.row]
+         return cell
       }
-      return cell
    }
    
    
    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+      getWallet(address: savedWallets[indexPath.row])
+      tableView.deselectRow(at: indexPath, animated: true)
+      animateTransitionIfNeeded(state: nextState, duration: 1.5)
+   }
+   
+   
+   func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
       walletData = WalletData()
       selectedWallet = savedWallets[indexPath.row]
       walletData.fetchWalletData(address: selectedWallet)
       detailTableViewController.walletData = walletData
       
       DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-
+         
          self.show(self.detailTableViewController, sender: self)
          self.detailTableViewController.tableView.reloadData()
          SVProgressHUD.dismiss()
@@ -195,27 +238,27 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
    
    
    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-      return true
+      if savedWallets.isEmpty {
+         return false
+      } else { return true }
    }
    
    
    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+      
       if editingStyle == .delete {
          savedWallets.remove(at: indexPath.row)
-         
          self.defaults.set(self.savedWallets, forKey: "savedWallets")
          
          tableView.beginUpdates()
          tableView.deleteRows(at: [indexPath], with: .automatic)
          tableView.endUpdates()
-         
       }
    }
    
    
    @IBAction func hitMePressed(_ sender: Any) {
-      print("PRESSED")
-      performSegue(withIdentifier: "savedAddressSegue", sender: self)
+      
    }
    
    
@@ -263,7 +306,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
    
    
    func setUpButton() {
-      hitMeButton.layer.backgroundColor = #colorLiteral(red: 0.3333333433, green: 0.3333333433, blue: 0.3333333433, alpha: 1)
+      hitMeButton.layer.backgroundColor = #colorLiteral(red: 0.1298420429, green: 0.1298461258, blue: 0.1298439503, alpha: 1)
       hitMeButton.layer.cornerRadius    = 17.0
       hitMeButton.layer.shadowColor     = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
       hitMeButton.layer.shadowRadius    = 8
@@ -273,6 +316,21 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
    }
    
    func getWallet(address: String) {
-      // Protocol Method
+      fetchWalletBalances(address: address)
+   }
+   
+   
+   func fetchWalletBalances(address: String) {
+      let balanceRequestURL = "https://e-api.haloplatform.tech/halo/addresses/\(address)/balance"
+      var balance: Double   = 0
+      Alamofire.request(balanceRequestURL, method: .get).responseJSON { response in
+         if response.result.isSuccess {
+            let jsonData = JSON(response.result.value as Any)
+            balance = jsonData["result"]["balance"].doubleValue
+            self.walletBalance = "\(self.walletData.format(number: balance)) HALO"
+         } else {
+            print("Error \(String(describing: response.result.error))")
+         }
+      }
    }
 }
