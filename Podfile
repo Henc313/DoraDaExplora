@@ -6,7 +6,6 @@ target 'DoraDaExplora' do
   use_frameworks!
 
   # Pods for DoraDaExplora
-	pod 'web3swift', '~> 2.1.3'
 	pod 'SwiftyJSON'
 	pod 'Alamofire'
 	pod 'SVProgressHUD'

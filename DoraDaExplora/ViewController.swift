@@ -5,8 +5,9 @@ import SVProgressHUD
 import Alamofire
 import SwiftyJSON
 
-class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, CanReceiveAddress {
+class ViewController: UIViewController, CanReceiveAddress {
    
+   //MARK:- Properties
    var wallet = "0xbcef3088c414d25da1bde04775d484177f9326cb"
    var numberFormatter: NumberFormatter?
    var addressList = [String]()
@@ -41,6 +42,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
    var runningAnimations = [UIViewPropertyAnimator]()
    var animationProgressWhenInterrupted: CGFloat = 0
    
+   //MARK:- IBOutlets
    @IBOutlet var cardView: UIView!
    @IBOutlet var hitMeButton: UIButton!
    @IBOutlet var balanceLabel: UILabel!
@@ -49,28 +51,30 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
    @IBOutlet var savedListTableView: UITableView!
    @IBOutlet var visualEffectView: UIVisualEffectView!
    
+   //MARK:- ViewDidLoad
    override func viewDidLoad() {
       super.viewDidLoad()
       
-      visualEffectView.effect = nil
+      title = "Dora Da Explora"
+      visualEffectView.effect   = nil
       visualEffectView.isHidden = true
+      savedListTableView.delegate = self
       
       savedWallets = defaults.object(forKey: "savedWallets") as? [String] ?? [String]()
       setupCard()
       setUpButton()
       
-      guard let walletList = defaults.object(forKey: "savedWallets") as? [String] else { return }
-      savedWallets = walletList
-      
-      savedListTableView.alpha = 0.75
-      
       navigationItem.leftBarButtonItem   = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewAddress))
       navigationItem.rightBarButtonItems = [UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(goToAddressList)),
                                             UIBarButtonItem(barButtonSystemItem: .bookmarks, target: self, action: #selector(makeTabTransparent))
       ]
+      savedListTableView.alpha = 0.75
+      
+      guard let walletList = defaults.object(forKey: "savedWallets") as? [String] else { return }
+      savedWallets = walletList
    }
    
-   
+   //MARK:- Methods
    @objc func makeTabTransparent() {
       animateTransitionIfNeeded(state: nextState, duration: 1)
    }
@@ -95,7 +99,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
       cardView.backgroundColor = .clear
    }
    
-   
+   //MARK:- Animation Methods
    @objc func handleCardTap(recognizer: UITapGestureRecognizer) {
       switch recognizer.state {
       case .ended:
@@ -106,7 +110,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
    }
    
    
-   //TODO: - Adapt to UIView
    @objc func handleCardPan(recognizer: UIPanGestureRecognizer) {
       switch recognizer.state {
       case .began:
@@ -189,76 +192,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
       }
    }
    
-   
-   //MARK: - TableView Delegate Methods
-   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//      if savedWallets.isEmpty {
-//         return 1
-//      } else {
-         return savedWallets.count
-//      }
-   }
-   
-   
-   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-      if savedWallets.isEmpty {
-         let cell = tableView.dequeueReusableCell(withIdentifier: "StaticCell", for: indexPath)
-         cell.textLabel?.text = "No addresses saved yet"
-         cell.textLabel?.textColor = .white
-         cell.isEditing = false
-         return cell
-      } else {
-         let cell = tableView.dequeueReusableCell(withIdentifier: "AddressBookCell", for: indexPath)
-         cell.textLabel?.text = savedWallets[indexPath.row]
-         return cell
-      }
-   }
-   
-   
-   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-      getWallet(address: savedWallets[indexPath.row])
-      tableView.deselectRow(at: indexPath, animated: true)
-      animateTransitionIfNeeded(state: nextState, duration: 1.5)
-   }
-   
-   
-   func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-      walletData = WalletData()
-      selectedWallet = savedWallets[indexPath.row]
-      walletData.fetchWalletData(address: selectedWallet)
-      detailTableViewController.walletData = walletData
-      
-      DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-         
-         self.show(self.detailTableViewController, sender: self)
-         self.detailTableViewController.tableView.reloadData()
-         SVProgressHUD.dismiss()
-      }
-   }
-   
-   
-   func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-      if savedWallets.isEmpty {
-         return false
-      } else { return true }
-   }
-   
-   
-   func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-      
-      if editingStyle == .delete {
-         savedWallets.remove(at: indexPath.row)
-         self.defaults.set(self.savedWallets, forKey: "savedWallets")
-         
-         tableView.beginUpdates()
-         tableView.deleteRows(at: [indexPath], with: .automatic)
-         tableView.endUpdates()
-      }
-   }
-   
-   
+   //MARK:- IBActions
    @IBAction func hitMePressed(_ sender: Any) {
-      
    }
    
    
@@ -267,7 +202,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
       ac.addTextField()
       ac.textFields![0].placeholder = "HALO Wallet Address Here"
       
-      let getTheBalance = UIAlertAction(title: "Save", style: .default) { [unowned ac] _ in
+      let saveAction = UIAlertAction(title: "Save", style: .default) { [unowned ac] _ in
          guard let walletAddress = ac.textFields![0].text else { return }
          
          if walletAddress.count != 42 {
@@ -280,11 +215,16 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             self.savedWallets.append(walletAddress)
             self.defaults.set(self.savedWallets, forKey: "savedWallets")
             self.savedListTableView.reloadData()
+            let indexPaths: [IndexPath] = [[0, self.savedWallets.count]]
+            self.savedListTableView.reloadRows(at: indexPaths, with: .automatic)
             
          }
       }
       
-      ac.addAction(getTheBalance)
+      let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+      
+      ac.addAction(saveAction)
+      ac.addAction(cancelAction)
       present(ac, animated: true)
    }
    
@@ -315,6 +255,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
       hitMeButton.setTitleColor(.lightGray, for: .normal)
    }
    
+   
    func getWallet(address: String) {
       fetchWalletBalances(address: address)
    }
@@ -331,6 +272,89 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
          } else {
             print("Error \(String(describing: response.result.error))")
          }
+      }
+   }
+   
+   
+}
+
+
+//MARK:- Extensions
+extension ViewController: UITableViewDataSource, UITableViewDelegate {
+   
+   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+      if savedWallets.isEmpty {
+         return 1
+      } else {
+         return savedWallets.count + 1
+      }
+   }
+   
+   
+   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+      if indexPath.row == 0 {
+         if savedWallets.isEmpty {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "StaticCell", for: indexPath)
+            cell.textLabel?.text = "No addresses saved yet"
+            cell.textLabel?.textColor = .white
+            cell.isEditing = false
+            return cell
+         } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "StaticCell", for: indexPath)
+            cell.textLabel?.text = "Address book"
+            cell.textLabel?.textColor = .white
+            cell.isEditing = false
+            return cell
+         }
+      } else {
+         let cell = tableView.dequeueReusableCell(withIdentifier: "AddressBookCell", for: indexPath)
+         cell.textLabel?.text = savedWallets[indexPath.row - 1]
+         return cell
+      }
+   }
+   
+   
+   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+      getWallet(address: savedWallets[indexPath.row - 1])
+      tableView.deselectRow(at: indexPath, animated: true)
+      animateTransitionIfNeeded(state: nextState, duration: 1.5)
+   }
+   
+   
+   func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+      walletData = WalletData()
+      selectedWallet = savedWallets[indexPath.row - 1]
+      walletData.fetchWalletData(address: selectedWallet)
+      detailTableViewController.walletData = walletData
+      
+      DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+         
+         self.show(self.detailTableViewController, sender: self)
+         self.detailTableViewController.tableView.reloadData()
+         SVProgressHUD.dismiss()
+      }
+   }
+   
+   
+   func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+      if indexPath.row == 0 {
+         return false
+      } else { return true }
+   }
+   
+   
+   func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+      
+      if editingStyle == .delete {
+         savedWallets.remove(at: indexPath.row - 1)
+         self.defaults.set(self.savedWallets, forKey: "savedWallets")
+         
+         tableView.beginUpdates()
+         tableView.deleteRows(at: [indexPath], with: .automatic)
+         var indexPaths = [IndexPath]()
+         indexPaths = [[0, 0]]
+         tableView.reloadRows(at: indexPaths, with: .automatic)
+         tableView.endUpdates()
       }
    }
 }

@@ -114,4 +114,12 @@ class DetailTableViewController: UITableViewController {
    }
    
    
+   override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+      if indexPath == [0, 0] {
+         return 64
+      } else {
+         return 44
+      }
+   }
+   
 }
